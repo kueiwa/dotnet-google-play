@@ -23,11 +23,7 @@ namespace GooglePlay
 
         public GooglePlayApi(GooglePlayApiOption googlePlayApiOption, HttpMessageHandler handler) : base(handler)
         {
-            if (googlePlayApiOption == null)
-            {
-                throw new ArgumentNullException(nameof(googlePlayApiOption));
-            }
-            _option = googlePlayApiOption;
+            _option = googlePlayApiOption ?? throw new ArgumentNullException(nameof(googlePlayApiOption));
         }
 
         public string AuthToken => _option.AuthToken;
@@ -72,7 +68,8 @@ namespace GooglePlay
                 }
 
                 request.Headers.AcceptLanguage.ParseAdd(_option.Language);
-                request.Headers.Authorization = AuthenticationHeaderValue.Parse($"GoogleLogin auth={_option.AuthToken}");
+                request.Headers.Authorization =
+                    AuthenticationHeaderValue.Parse($"GoogleLogin auth={_option.AuthToken}");
                 request.Headers.Add("X-DFE-Enabled-Experiments", string.Join(",", _option.EnabledExperiments));
                 request.Headers.Add("X-DFE-Unsupported-Experiments", string.Join(",", _option.UnsupportedExperiments));
                 request.Headers.Add("X-DFE-Device-Id", _option.AndroidId);
@@ -178,8 +175,6 @@ namespace GooglePlay
             var query = new Dictionary<string, string>
             {
                 ["c"] = "3"
-                //["cat"] = categoryId,
-                //["ctr"] = subCategoryId
             };
             if (!string.IsNullOrWhiteSpace(categoryId))
             {
@@ -262,7 +257,6 @@ namespace GooglePlay
                 {
                     dic[items[0]] = items[1];
                 }
-                //assert(pair.length === 2, 'expected list of pairs from server');
             }
             return dic;
         }
